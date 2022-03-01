@@ -16,6 +16,12 @@ public class Student extends Person {
         this.studentCode = String.valueOf(RandomNumber.getRandomNumber());
     }
 
+    public Student(String firstName, String lastName, String nationalCode, String birthDate, String studentCode, DEPARTMENT department, StudentTerm term) {
+        super(firstName, lastName, nationalCode, birthDate);
+        this.studentCode = studentCode;
+        this.department = department;
+        this.term = term;
+    }
 
     public String getStudentCode() {
         return studentCode;

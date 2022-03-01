@@ -1,7 +1,11 @@
 
 
 import Exceptions.*;
+import model.entity.Course;
 import model.entity.Professor;
+import model.entity.Score;
+import model.entity.TrainingEmployee;
+import model.repository.TrainingEmployeeRepository;
 import service.*;
 import utils.ExceptionHandling;
 
@@ -10,12 +14,15 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        StudentService studentService = new StudentService();
+
 
 //      default value
         TrainingEmployeeList trainingEmployeeList = new TrainingEmployeeList();
         trainingEmployeeList.add("mohammad", "mohammadi", "5865468445", "2000-02-02", "admin", "admin");
 
-        StudentList studentList = new StudentList();
+//        StudentList studentList = new StudentList();
+        StudentList studentList = studentService.studentFindAll();
         studentList.add("ali", "yegane", "2500555555", "2002-02-02", "COMPUTER");
         studentList.add("majid", "majidi", "2500562078", "2008-03-02", "COMPUTER");
 
@@ -37,11 +44,14 @@ public class Main {
         System.out.println("------------ student Information ------------");
         studentList.showList();
         System.out.println();
-        System.out.println("------------ professor Information ------------");
-        professorList.showList();
-        System.out.println();
+//        System.out.println("------------ professor Information ------------");
+//        professorList.showList();
+//        System.out.println();
         Scanner scn = new Scanner(System.in);
         ProfessorService professorService = new ProfessorService();
+        CourseService courseService = new CourseService();
+        ScoreService scoreService = new ScoreService();
+        TrainingEmployeeService trainingEmployeeService = new TrainingEmployeeService();
         boolean flag = false;
         boolean state = true;
         int permission = -1;
@@ -54,7 +64,8 @@ public class Main {
             commendLine = scn.nextLine().trim();
             commend = commendLine.split(" ");
             if (commend[0].equals("login")) {
-                if (trainingEmployeeList.login(commend[1], commend[2])) {
+//                if (trainingEmployeeList.login(commend[1], commend[2])) {
+                if (trainingEmployeeService.loginTraining(commend[1], commend[2])) {
                     id = commend[2];
                     permission = 1;
                     flag = true;
@@ -64,7 +75,8 @@ public class Main {
                     permission = 2;
                     flag = true;
                     printStudentCommend();
-                } else if (professorList.login(commend[1], commend[2])) {
+//                } else if (professorList.login(commend[1], commend[2])) {
+                } else if (professorService.loginPro(commend[1], commend[2])) {
                     id = commend[1];
                     permission = 3;
                     flag = true;
@@ -160,7 +172,7 @@ public class Main {
                                 try {
                                     ExceptionHandling.isDigit(commend[1]);
 //                                    professorList.delete(commend[1]);
-                                    professorService.delete(Integer.valueOf(commend[1]));
+                                    professorService.delete(commend[1]);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (Exception e) {
@@ -175,7 +187,6 @@ public class Main {
                                     ExceptionHandling.isNationalCode(commend[4]);
 //                                    editProfessor professorCode newFirstName newLastName newNationalCode
                                     Professor professor = professorService.getProfessor(commend[1]);
-                                    System.out.println(professor);
                                     professor.setFirstName(commend[2]);
                                     professor.setLastName(commend[3]);
                                     professor.setNationalCode(commend[4]);
@@ -184,6 +195,7 @@ public class Main {
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (FirstNameException firstNameException) {
+                                    firstNameException.printStackTrace();
                                     System.out.println("incorrect firstName!");
                                 } catch (LastNameException lastNameException) {
                                     System.out.println("incorrect lastName!");
@@ -200,7 +212,8 @@ public class Main {
                                     ExceptionHandling.isLastName(commend[2]);
                                     ExceptionHandling.isNationalCode(commend[3]);
                                     ExceptionHandling.isDate(commend[4]);
-                                    trainingEmployeeList.add(commend[1], commend[2], commend[3], commend[4], commend[5], commend[6]);
+//                                    trainingEmployeeList.add(commend[1], commend[2], commend[3], commend[4], commend[5], commend[6]);
+                                    trainingEmployeeService.add(new TrainingEmployee(commend[1], commend[2], commend[3], commend[4], commend[5], commend[6]));
                                 } catch (FirstNameException firstNameException) {
                                     System.out.println("incorrect firstName!");
                                 } catch (LastNameException lastNameException) {
@@ -216,7 +229,8 @@ public class Main {
                             case "deleteTrainingEmployee":
                                 try {
                                     ExceptionHandling.isDigit(commend[1]);
-                                    trainingEmployeeList.delete(commend[1]);
+//                                    trainingEmployeeList.delete(commend[1]);
+                                    trainingEmployeeService.delete(commend[1]);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (Exception e) {
@@ -229,7 +243,12 @@ public class Main {
                                     ExceptionHandling.isFirstName(commend[2]);
                                     ExceptionHandling.isLastName(commend[3]);
                                     ExceptionHandling.isNationalCode(commend[4]);
-                                    trainingEmployeeList.edit(commend[1], commend[2], commend[3], commend[4]);
+//                                    trainingEmployeeList.edit(commend[1], commend[2], commend[3], commend[4]);
+                                    TrainingEmployee trainingEmployee = trainingEmployeeService.getTraining(commend[1]);
+                                    trainingEmployee.setFirstName(commend[2]);
+                                    trainingEmployee.setLastName(commend[3]);
+                                    trainingEmployee.setNationalCode(commend[4]);
+                                    trainingEmployeeService.update(trainingEmployee);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (FirstNameException firstNameException) {
@@ -249,7 +268,8 @@ public class Main {
                                     ExceptionHandling.isWord(commend[3]);
                                     ExceptionHandling.isUnit(commend[4]);
                                     ExceptionHandling.isNationalCode(commend[5]);
-                                    courseList.add(commend[1], commend[2], commend[3], commend[4], commend[5]);
+//                                    courseList.add(commend[1], commend[2], commend[3], commend[4], commend[5]);
+                                    courseService.add(new Course(commend[1], commend[2], commend[3], commend[4], commend[5]));
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (DepartmentException digitException) {
@@ -267,7 +287,8 @@ public class Main {
                             case "deleteCourse":
                                 try {
                                     ExceptionHandling.isDigit(commend[1]);
-                                    courseList.delete(commend[1]);
+//                                    courseList.delete(commend[1]);
+                                    courseService.delete(commend[1]);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (Exception e) {
@@ -280,7 +301,12 @@ public class Main {
                                     ExceptionHandling.isWord(commend[2]);
                                     ExceptionHandling.isUnit(commend[3]);
                                     ExceptionHandling.isNationalCode(commend[4]);
-                                    courseList.edit(commend[1], commend[2], commend[3], commend[4]);
+//                                    courseList.edit(commend[1], commend[2], commend[3], commend[4]);
+                                    Course course = courseService.findByCode(commend[1]);
+                                    course.setCourseName(commend[2]);
+                                    course.setUnit(commend[3]);
+                                    course.setProfessorNationalCode(commend[4]);
+                                    courseService.update(course);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code");
                                 } catch (WordException wordException) {
@@ -294,7 +320,8 @@ public class Main {
                                 }
                                 break;
                             case "salary":
-                                System.out.println(trainingEmployeeList.showSalary());
+//                                System.out.println(trainingEmployeeList.showSalary());
+                                System.out.println(trainingEmployeeService.showSalary());
                                 break;
                             case "showStudentList":
                                 studentList.showList();
@@ -304,10 +331,12 @@ public class Main {
 //                                professorList.showList();
                                 break;
                             case "showTrainingEmployeeList":
-                                trainingEmployeeList.showList();
+//                                trainingEmployeeList.showList();
+                                trainingEmployeeService.findAll();
                                 break;
                             case "showCourseList":
-                                courseList.showList();
+//                                courseList.showList();
+                                courseService.findAll();
                                 break;
                             case "help":
                                 printTrainingEmployeeCommend();
@@ -333,7 +362,8 @@ public class Main {
                                 studentList.showStudentProfile(id);
                                 break;
                             case "showCoursesList":
-                                courseList.showDepartmentCourse(studentList.getDepartment(id));
+//                                courseList.showDepartmentCourse(studentList.getDepartment(id));
+                                courseService.showDepartmentCourse(studentList.getDepartment(id));
                                 break;
                             case "selectUnit":
                                 String[] courses = new String[commend.length - 2];
@@ -342,7 +372,8 @@ public class Main {
                                 }
                                 tempTerm = commend[1];
                                 try {
-                                    Integer unit = courseList.getUnit(courses);
+//                                    Integer unit = courseList.getUnit(courses);
+                                    Integer unit = courseService.getUnit(courses);
                                     studentList.addTerm(id, commend[1], courses, unit);
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code!");
@@ -351,12 +382,18 @@ public class Main {
                                 }
                                 break;
                             case "showSelectedCourses":
-                                courseList.showStudentCourses(studentList.getStudentCoursesID(id, tempTerm));
-                                String n = studentList.getNationalCode(id);
+                                try {
+//                                courseList.showStudentCourses(studentList.getStudentCoursesID(id, tempTerm));
+                                    courseService.showStudentCourses(studentList.getStudentCoursesID(id, tempTerm));
+                                    String n = studentList.getNationalCode(id);
                                 scoreList.showStudentScores(n);
+//                                    scoreService.showStudentScores(n);
                                 studentList.setGrade(id, scoreList.getGradPointAverage(n));
+                                    studentList.setGrade(id, scoreService.getGradPointAverage(n));
 
-                                studentList.getGrade(id);
+                                    studentList.getGrade(id);
+                                } catch (Exception ignored) {
+                                }
                                 break;
                             case "help":
                                 printStudentCommend();
@@ -384,7 +421,8 @@ public class Main {
                                 break;
                             case "showCourses":
 //                                courseList.showProfessorCourses(professorList.getNationalCode(id));
-                                courseList.showProfessorCourses(professorService.getNationalCode(id));
+//                                courseList.showProfessorCourses(professorService.getNationalCode(id));
+                                courseService.showProfessorCourse(professorService.getNationalCode(id));
                                 break;
                             case "showStudent":
                                 studentList.showList();
@@ -395,7 +433,8 @@ public class Main {
                                     ExceptionHandling.isDigit(commend[1]);
                                     ExceptionHandling.isNationalCode(commend[2]);
                                     ExceptionHandling.isScore(commend[3]);
-                                    scoreList.add(commend[1], commend[2], id, commend[3]);
+//                                    scoreList.add(commend[1], commend[2], id, commend[3]);
+                                    scoreService.add(new Score(commend[1], commend[2], id, commend[3]));
                                 } catch (DigitException digitException) {
                                     System.out.println("incorrect code!");
                                 } catch (NationalCodeException nationalCodeException) {
@@ -407,8 +446,18 @@ public class Main {
                                 }
                                 break;
                             case "showSalary":
-                                String nationalCode = professorList.getNationalCode(id);
-                                System.out.println(professorList.getProfessorSalary(id, courseList.getProfessorUnit(nationalCode, studentList.getTerm(commend[1]))));
+                                String nationalCode = professorService.getNationalCode(id);
+//                                String nationalCode = professorList.getNationalCode(id);
+//                                System.out.println(professorList.getProfessorSalary(id, courseList.getProfessorUnit(nationalCode, studentList.getTerm(commend[1]))));
+                                System.out.println(
+                                        professorList.getProfessorSalary(
+                                                id,
+                                                courseService.getProfessorUnit(
+                                                        nationalCode,
+                                                        studentList.getTerm(commend[1])
+                                                )
+                                        )
+                                );
                                 break;
                             case "help":
                                 printProfessorCommend();

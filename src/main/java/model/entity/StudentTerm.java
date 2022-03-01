@@ -8,6 +8,11 @@ public class StudentTerm {
    private Integer emptyHomeIndex = 0;
    private double grade ;
    public StudentTerm(){}
+
+   public StudentTerm(double grade) {
+      this.grade = grade;
+   }
+
    public StudentTerm(String term, String[] coursesID) {
       this.term = term;
       addCourse(coursesID);

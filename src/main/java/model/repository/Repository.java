@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface Repository<T> {
     void add(T t);
-    void delete(Integer value);
+    void delete(String value);
     void update(T t);
     List<T> findAll();
     T getResultSet(ResultSet resultSet);

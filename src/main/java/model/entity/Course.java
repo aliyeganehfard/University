@@ -19,6 +19,22 @@ public class Course {
 //        this.term = term;
     }
 
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setUnit(int unit) {
+        this.unit = unit;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
     public int getUnit() {
         return unit;
     }
